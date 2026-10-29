@@ -1,0 +1,26 @@
+{
+    "project": "EcoTwin-AI",
+    "model_type": "Lightweight neural-network health classifier",
+    "target_type": "Synthetic engineering health label",
+    "features": [
+        "ambient_temperature",
+        "module_temperature",
+        "voltage",
+        "current",
+        "power",
+        "irradiance"
+    ],
+    "classes": [
+        "Healthy",
+        "Warning",
+        "Critical"
+    ],
+    "training_records": 10196,
+    "testing_records": 2550,
+    "accuracy": 0.9568627450980393,
+    "inference_time_seconds": 0.13719890001812018,
+    "keras_model": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\backend\\models\\ecotwin_health_model.keras",
+    "tflite_model": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\backend\\models\\ecotwin_health_model.tflite",
+    "int8_model": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\backend\\models\\ecotwin_health_model_int8.tflite",
+    "scaler": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\backend\\models\\ecotwin_scaler.pkl"
+}

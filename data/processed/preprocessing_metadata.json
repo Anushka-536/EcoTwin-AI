@@ -1,0 +1,32 @@
+{
+    "input_file": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\data\\external\\solards.csv",
+    "output_file": "C:\\Users\\DELL\\Downloads\\EcoTwin-AI\\data\\processed\\solards_cleaned.csv",
+    "raw_rows": 13415,
+    "processed_rows": 12746,
+    "duplicates_removed": 434,
+    "invalid_value_statistics": {
+        "initial_rows": 13415,
+        "missing_or_invalid_removed": 0,
+        "range_invalid_removed": 235
+    },
+    "features": [
+        "ambient_temperature",
+        "module_temperature",
+        "voltage",
+        "current",
+        "power",
+        "irradiance"
+    ],
+    "derived_features": [
+        "temperature_difference"
+    ],
+    "source_columns": {
+        "SR_NO": "record_id",
+        "AMBIENT_TEMP": "ambient_temperature",
+        "MODULE_TEMP": "module_temperature",
+        "VOLTAGE": "voltage",
+        "CURRENT": "current",
+        "POWER": "power",
+        "IR": "irradiance"
+    }
+}

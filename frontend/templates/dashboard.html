@@ -1,0 +1,3956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EcoTwin-AI | Solar Digital Twin</title>
+
+<style>
+:root{
+    --green:#087f5b;
+    --green-dark:#07533f;
+    --green-light:#eaf7f2;
+    --bg:#edf5f2;
+    --card:#fff;
+    --border:#d5e6e0;
+    --text:#10201b;
+    --muted:#667873;
+    --warning:#e5a000;
+    --danger:#c62828;
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:var(--green-dark);
+    color:white;
+    min-height:58px;
+    padding:8px 22px;
+    display:flex;
+    align-items:center;
+    gap:28px;
+}
+
+.logo{
+    font-size:19px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.logo small{
+    display:block;
+    font-size:8px;
+    font-weight:400;
+}
+
+nav{
+    display:flex;
+    gap:20px;
+    flex:1;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:700;
+}
+
+nav a:hover{
+    color:#b9f3df;
+}
+
+button{
+    border:0;
+    border-radius:6px;
+    padding:9px 14px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.btn{
+    background:var(--green);
+    color:white;
+}
+
+.btn:hover{
+    background:#066b4d;
+}
+
+.btn-light{
+    background:white;
+    color:var(--green);
+    border:1px solid var(--green);
+}
+
+.wrap{
+    max-width:1200px;
+    margin:auto;
+    padding:24px 18px 50px;
+}
+
+.eyebrow{
+    color:var(--green);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+h1{
+    margin:5px 0;
+    font-size:28px;
+}
+
+h2{
+    margin:4px 0 10px;
+    font-size:19px;
+}
+
+h3{
+    margin:5px 0 12px;
+    font-size:14px;
+}
+
+p{
+    margin:5px 0;
+}
+
+.sub{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.grid{
+    display:grid;
+    gap:12px;
+}
+
+.kpis{
+    grid-template-columns:repeat(5,1fr);
+}
+
+.two{
+    grid-template-columns:1.65fr 1fr;
+}
+
+.six{
+    grid-template-columns:repeat(6,1fr);
+}
+
+.card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:15px;
+    box-shadow:0 2px 8px rgba(0,80,55,.06);
+}
+
+.kpi small,
+.sensor small{
+    color:var(--muted);
+    text-transform:uppercase;
+    font-size:8px;
+    display:block;
+}
+
+.kpi strong{
+    display:block;
+    margin-top:7px;
+    font-size:22px;
+}
+
+.kpi span{
+    color:var(--muted);
+    font-size:9px;
+}
+
+.row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:9px;
+    font-weight:800;
+}
+
+.ok{
+    background:#dff6ec;
+    color:var(--green);
+}
+
+.warn{
+    background:#fff1c8;
+    color:#996600;
+}
+
+.bad{
+    background:#ffe0de;
+    color:#b42318;
+}
+
+/* SOLAR ASSET */
+
+.asset{
+    height:330px;
+    position:relative;
+    overflow:hidden;
+    border-radius:9px;
+    border:1px solid #c8e1da;
+    background:
+        linear-gradient(
+            to bottom,
+            #bcecff 0%,
+            #bcecff 56%,
+            #b7dda5 56%,
+            #b7dda5 100%
+        );
+}
+
+.sun{
+    position:absolute;
+    right:28px;
+    top:22px;
+    width:48px;
+    height:48px;
+    background:#ffd34d;
+    border-radius:50%;
+    box-shadow:0 0 18px #ffd34d;
+}
+
+.cloud{
+    position:absolute;
+    width:48px;
+    height:18px;
+    background:white;
+    border-radius:30px;
+}
+
+.cloud:before,
+.cloud:after{
+    content:"";
+    position:absolute;
+    background:white;
+    border-radius:50%;
+}
+
+.cloud:before{
+    width:22px;
+    height:22px;
+    left:8px;
+    top:-9px;
+}
+
+.cloud:after{
+    width:28px;
+    height:28px;
+    right:5px;
+    top:-13px;
+}
+
+.cloud1{
+    left:55px;
+    top:55px;
+}
+
+.cloud2{
+    left:175px;
+    top:30px;
+}
+
+.panels{
+    position:absolute;
+    left:25%;
+    top:42%;
+    display:grid;
+    grid-template-columns:repeat(4,78px);
+    gap:9px;
+}
+
+.panel{
+    height:47px;
+    border:2px solid #084d75;
+    border-radius:3px;
+    background:#116b9f;
+    box-shadow:0 3px 6px rgba(0,0,0,.25);
+    cursor:pointer;
+    position:relative;
+}
+
+.panel:after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:0;
+    width:1px;
+    height:100%;
+    background:rgba(255,255,255,.22);
+}
+
+.panel:hover,
+.panel.active{
+    outline:3px solid #ffe066;
+    transform:translateY(-2px);
+}
+
+.inverter{
+    position:absolute;
+    left:44%;
+    top:72%;
+    background:#17384a;
+    color:white;
+    padding:12px 18px;
+    border-radius:8px;
+    text-align:center;
+    font-size:9px;
+    cursor:pointer;
+    box-shadow:0 4px 9px rgba(0,0,0,.3);
+}
+
+.inverter:hover{
+    outline:3px solid #ffe066;
+}
+
+.selected{
+    margin-top:8px;
+    padding:9px;
+    background:#fff9d9;
+    border:1px solid #ead16a;
+    border-radius:7px;
+    font-size:10px;
+}
+
+.asset-info{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:10px;
+    font-size:9px;
+}
+
+.asset-info b{
+    font-size:10px;
+}
+
+/* HEALTH */
+
+.health-circle{
+    width:125px;
+    height:125px;
+    margin:15px auto;
+    border:7px solid #dcebe6;
+    border-top-color:var(--green);
+    border-right-color:var(--green);
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.health-circle strong{
+    color:var(--green);
+    font-size:28px;
+}
+
+.health-circle span{
+    color:var(--muted);
+    font-size:8px;
+}
+
+.health-status{
+    text-align:center;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.metric{
+    display:flex;
+    justify-content:space-between;
+    padding:8px;
+    margin-top:6px;
+    border:1px solid var(--border);
+    border-radius:7px;
+    font-size:9px;
+}
+
+.metric b{
+    font-size:10px;
+}
+
+/* TELEMETRY */
+
+.sensor{
+    min-height:95px;
+}
+
+.sensor strong{
+    display:block;
+    margin:7px 0 4px;
+    font-size:20px;
+}
+
+.sensor span{
+    color:var(--muted);
+    font-size:8px;
+}
+
+.live{
+    color:var(--green);
+    font-weight:700;
+    font-size:10px;
+}
+
+.status{
+    padding:9px;
+    margin-top:10px;
+    background:#f5faf8;
+    border-radius:7px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+/* CHART */
+
+.charts{
+    grid-template-columns:1.5fr 1fr;
+}
+
+.chart{
+    height:300px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:white;
+    padding:10px;
+}
+
+.chart-title{
+    font-size:12px;
+    font-weight:700;
+}
+
+.chart svg{
+    width:100%;
+    height:250px;
+}
+
+/* PIPELINE */
+
+.pipeline{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.pipeline-box{
+    min-width:105px;
+    padding:17px 10px;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:white;
+    font-size:9px;
+}
+
+.pipeline-box.active{
+    border:2px solid var(--green);
+}
+
+.arrow{
+    color:var(--green);
+    font-size:20px;
+}
+
+/* XAI */
+
+.xai-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:12px;
+}
+
+.xai-row{
+    display:grid;
+    grid-template-columns:140px 1fr 55px;
+    align-items:center;
+    gap:8px;
+    margin:12px 0;
+    font-size:10px;
+}
+
+.bar{
+    height:9px;
+    background:#e4efeb;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.bar i{
+    display:block;
+    height:100%;
+    background:var(--green);
+}
+
+.confidence{
+    text-align:center;
+    padding-top:35px;
+}
+
+.confidence strong{
+    display:block;
+    color:var(--green);
+    font-size:30px;
+}
+
+/* HISTORY */
+
+.history-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:9px;
+}
+
+th,td{
+    padding:9px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+}
+
+th{
+    background:#eff7f4;
+}
+
+/* ALERTS */
+
+.alert-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.alert-count{
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+}
+
+.alert-count strong{
+    display:block;
+    font-size:20px;
+}
+
+.event{
+    border-left:4px solid var(--green);
+    padding:11px;
+    margin:8px 0;
+    background:#f8fcfa;
+    border-radius:6px;
+    font-size:10px;
+}
+
+.event.warning{
+    border-left-color:var(--warning);
+}
+
+.event.critical{
+    border-left-color:var(--danger);
+}
+
+.event b{
+    font-size:11px;
+}
+
+.event small{
+    color:var(--muted);
+}
+
+/* API */
+
+.api-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.api-item{
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:9px;
+    font-size:9px;
+}
+
+.api-ok{
+    color:var(--green);
+    font-weight:800;
+}
+
+.api-error{
+    color:var(--danger);
+    font-weight:800;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    nav{
+        display:none;
+    }
+
+    .kpis{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .two,
+    .charts,
+    .xai-grid{
+        grid-template-columns:1fr;
+    }
+
+    .six{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .panels{
+        left:13%;
+        grid-template-columns:repeat(4,60px);
+    }
+
+    .panel{
+        height:40px;
+    }
+
+    .alert-summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .api-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+EcoTwin-AI
+<small>Explainable TinyML-Based Digital Twin</small>
+</div>
+
+<nav>
+<a href="#overview">Overview</a>
+<a href="#telemetry">Telemetry</a>
+<a href="#prediction">TinyML</a>
+<a href="#xai">XAI</a>
+<a href="#history">History</a>
+<a href="#alerts">Alerts</a>
+<a href="#reports">Reports</a>
+</nav>
+
+<button class="btn-light" onclick="refreshAll()">Refresh</button>
+
+</header>
+
+
+<main class="wrap" id="overview">
+
+<div class="eyebrow">DIGITAL TWIN ENGINE</div>
+
+<h1>Solar Energy Digital Twin</h1>
+
+<p class="sub">
+Real-time virtual representation of the physical solar energy asset for predictive maintenance.
+</p>
+
+
+<!-- KPI -->
+
+<div class="grid kpis">
+
+<div class="card kpi">
+<small>Health Score</small>
+<strong id="health">--</strong>
+<span>out of 100</span>
+</div>
+
+<div class="card kpi">
+<small>Failure Probability</small>
+<strong id="failure">--</strong>
+<span>predicted risk</span>
+</div>
+
+<div class="card kpi">
+<small>Remaining Useful Life</small>
+<strong id="rul">--</strong>
+<span>days</span>
+</div>
+
+<div class="card kpi">
+<small>Twin State</small>
+<strong id="twinState">--</strong>
+<span id="syncTime">--</span>
+</div>
+
+<div class="card kpi">
+<small>ML Model</small>
+<strong id="model">--</strong>
+<span>TinyML runtime</span>
+</div>
+
+</div>
+
+
+<br>
+
+
+<!-- DIGITAL TWIN -->
+
+<section class="card">
+
+<div class="row">
+
+<div>
+<div class="eyebrow">VIRTUAL ASSET</div>
+<h2>Interactive Virtual Solar Energy Asset</h2>
+
+<p class="sub">
+Click a solar panel or inverter to inspect the virtual asset.
+</p>
+</div>
+
+<span id="statusBadge" class="badge ok">CONNECTING</span>
+
+</div>
+
+
+<div class="grid two">
+
+
+<!-- SOLAR ASSET -->
+
+<div>
+
+<div class="asset">
+
+<div class="sun"></div>
+
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+
+
+<div class="panels">
+
+<div class="panel" data-name="Solar Panel 1"></div>
+<div class="panel" data-name="Solar Panel 2"></div>
+<div class="panel" data-name="Solar Panel 3"></div>
+<div class="panel" data-name="Solar Panel 4"></div>
+
+<div class="panel" data-name="Solar Panel 5"></div>
+<div class="panel" data-name="Solar Panel 6"></div>
+<div class="panel" data-name="Solar Panel 7"></div>
+<div class="panel" data-name="Solar Panel 8"></div>
+
+</div>
+
+
+<div class="inverter" id="inverter">
+
+⚡<br>
+<b>DIGITAL INVERTER</b>
+<br>
+Virtual Power Conversion
+
+</div>
+
+</div>
+
+
+<div id="selectedInfo" class="selected">
+Selected: Whole Solar Facility
+</div>
+
+
+<div class="asset-info">
+
+<div>
+Facility<br>
+<b>EcoTwin-AI Solar Energy Facility</b>
+</div>
+
+<div>
+Device<br>
+<b id="device">SOLAR-ESP32-001</b>
+</div>
+
+<div>
+Last Sync<br>
+<b id="lastSync">--</b>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- HEALTH -->
+
+<div class="card">
+
+<h3>Virtual Asset Health</h3>
+
+<div class="health-circle">
+
+<strong id="healthCircle">--</strong>
+
+<span>HEALTH SCORE</span>
+
+</div>
+
+
+<div class="health-status" id="healthStatus">
+Waiting for telemetry
+</div>
+
+
+<div class="metric">
+<span>Risk Level</span>
+<b id="risk">--</b>
+</div>
+
+<div class="metric">
+<span>Failure Probability</span>
+<b id="failure2">--</b>
+</div>
+
+<div class="metric">
+<span>RUL</span>
+<b id="rul2">--</b>
+</div>
+
+<div class="metric">
+<span>Recommendation</span>
+<b id="recommendation">--</b>
+</div>
+
+<br>
+
+<button class="btn" onclick="synchronizeTwin()">
+Synchronize Digital Twin
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- TELEMETRY -->
+
+<section class="card" id="telemetry">
+
+<div class="row">
+
+<div>
+
+<div class="eyebrow">PHYSICAL → VIRTUAL</div>
+
+<h2>Live Sensor Telemetry</h2>
+
+<p class="sub">
+Latest measurements received from the solar asset.
+</p>
+
+</div>
+
+<button class="btn-light" onclick="loadTelemetry()">
+Refresh Telemetry
+</button>
+
+</div>
+
+
+<div class="grid six">
+
+
+<div class="card sensor">
+<small>Ambient Temperature</small>
+<strong id="temperature">--</strong>
+<span>°C</span>
+</div>
+
+
+<div class="card sensor">
+<small>Module Temperature</small>
+<strong id="moduleTemperature">--</strong>
+<span>°C</span>
+</div>
+
+
+<div class="card sensor">
+<small>Voltage</small>
+<strong id="voltage">--</strong>
+<span>V</span>
+</div>
+
+
+<div class="card sensor">
+<small>Current</small>
+<strong id="current">--</strong>
+<span>A</span>
+</div>
+
+
+<div class="card sensor">
+<small>Irradiance</small>
+<strong id="irradiance">--</strong>
+<span>W/m²</span>
+</div>
+
+
+<div class="card sensor">
+<small>Power</small>
+<strong id="power">--</strong>
+<span>W</span>
+</div>
+
+</div>
+
+
+<div class="grid" style="grid-template-columns:1fr 1fr;margin-top:12px">
+
+<div class="card sensor">
+
+<small>Vibration</small>
+
+<strong id="vibration">--</strong>
+
+<span>mm/s</span>
+
+</div>
+
+
+<div class="status">
+
+<span class="live">● LIVE TELEMETRY</span>
+
+<div id="telemetryStatus">
+Waiting for telemetry...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- CHARTS -->
+
+<section class="card">
+
+<div class="eyebrow">
+REAL-TIME VISUALIZATION
+</div>
+
+<h2>Live Sensor Trends</h2>
+
+<p class="sub">
+Live values from the telemetry database.
+</p>
+
+
+<div class="grid charts">
+
+<div class="chart">
+
+<div class="chart-title">
+Sensor Telemetry
+</div>
+
+<svg id="telemetryChart"
+viewBox="0 0 700 250"
+preserveAspectRatio="none">
+</svg>
+
+</div>
+
+
+<div class="chart">
+
+<div class="chart-title">
+Health Timeline
+</div>
+
+<svg id="healthChart"
+viewBox="0 0 500 250"
+preserveAspectRatio="none">
+</svg>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- PIPELINE -->
+
+<section class="card">
+
+<div class="eyebrow">
+SYSTEM PIPELINE
+</div>
+
+<h2>Physical Asset → Virtual Intelligence</h2>
+
+<p class="sub">
+End-to-end EcoTwin-AI processing architecture.
+</p>
+
+<div class="pipeline">
+
+<div class="pipeline-box">
+☀️
+<br><b>Physical Asset</b>
+<br><small>Solar Facility</small>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="pipeline-box">
+◉
+<br><b>Sensors</b>
+<br><small>Telemetry</small>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="pipeline-box active">
+◇
+<br><b>Digital Twin</b>
+<br><small>Virtual State</small>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="pipeline-box">
+◉
+<br><b>TinyML</b>
+<br><small>Prediction</small>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="pipeline-box">
+✦
+<br><b>XAI</b>
+<br><small>Explanation</small>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="pipeline-box">
+✓
+<br><b>Decision</b>
+<br><small>Maintenance</small>
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- PREDICTION -->
+
+<section class="card" id="prediction">
+
+<div class="eyebrow">
+TINYML PREDICTION ENGINE
+</div>
+
+<h2>Equipment Health Prediction</h2>
+
+<p class="sub">
+Health prediction is derived from the current telemetry and Digital Twin state.
+</p>
+
+
+<div class="grid two">
+
+<div class="card">
+
+<h3>Model Status</h3>
+
+<div class="metric">
+<span>Model</span>
+<b id="modelName">EcoTwin Health Model</b>
+</div>
+
+<div class="metric">
+<span>Format</span>
+<b id="modelFormat">--</b>
+</div>
+
+<div class="metric">
+<span>TensorFlow Lite</span>
+<b id="tflite">--</b>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Latest Prediction</h3>
+
+<div class="metric">
+<span>Health</span>
+<b id="predictionHealth">--</b>
+</div>
+
+<div class="metric">
+<span>Failure</span>
+<b id="predictionFailure">--</b>
+</div>
+
+<div class="metric">
+<span>RUL</span>
+<b id="predictionRul">--</b>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- XAI -->
+
+<section class="card" id="xai">
+
+<div class="eyebrow">
+EXPLAINABLE AI
+</div>
+
+<h2>Why Did the Model Make This Prediction?</h2>
+
+<p class="sub">
+Feature contribution calculated from the current sensor condition.
+</p>
+
+
+<div class="xai-grid">
+
+<div class="card">
+
+<h3>Feature Importance</h3>
+
+<div id="xaiBars"></div>
+
+<div class="status" id="xaiText">
+Waiting for telemetry...
+</div>
+
+</div>
+
+
+<div class="card confidence">
+
+<h3>Model Confidence</h3>
+
+<strong id="confidence">--</strong>
+
+<p class="sub">
+Confidence derived from the current health/risk state.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- MAINTENANCE -->
+
+<section class="card">
+
+<div class="eyebrow">
+DECISION SUPPORT
+</div>
+
+<h2>Maintenance Recommendation</h2>
+
+<p class="sub">
+Recommendation is based on health score, failure probability, RUL and telemetry thresholds.
+</p>
+
+
+<div class="card" style="border-left:4px solid var(--green)">
+
+<h3>Current Recommendation</h3>
+
+<strong id="maintenanceRecommendation">
+Waiting for telemetry
+</strong>
+
+<p class="sub" id="maintenanceReason">
+Waiting for current sensor values.
+</p>
+
+</div>
+
+<div class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:10px">
+
+<div class="metric">
+<span>Health</span>
+<b id="maintenanceHealth">--</b>
+</div>
+
+<div class="metric">
+<span>Failure Risk</span>
+<b id="maintenanceFailure">--</b>
+</div>
+
+<div class="metric">
+<span>RUL</span>
+<b id="maintenanceRul">--</b>
+</div>
+
+<div class="metric">
+<span>Risk</span>
+<b id="maintenanceRisk">--</b>
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- HISTORY -->
+
+<section class="card" id="history">
+
+<div class="row">
+
+<div>
+
+<div class="eyebrow">
+DIGITAL HISTORY
+</div>
+
+<h2>Historical Twin States</h2>
+
+<p class="sub">
+Previous synchronized Digital Twin states.
+</p>
+
+</div>
+
+<button class="btn-light" onclick="loadHistory()">
+Refresh History
+</button>
+
+</div>
+
+
+<div class="history-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Time</th>
+<th>Health</th>
+<th>Failure</th>
+<th>RUL</th>
+<th>Risk</th>
+<th>Recommendation</th>
+</tr>
+
+</thead>
+
+<tbody id="historyBody">
+
+<tr>
+<td colspan="6">
+Loading historical states...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- ALERTS -->
+
+<section class="card" id="alerts">
+
+<div class="row">
+
+<div>
+
+<div class="eyebrow">
+SAFETY & EVENTS
+</div>
+
+<h2>Alerts & Event Timeline</h2>
+
+<p class="sub">
+Threshold breaches, prediction risks and system events.
+</p>
+
+</div>
+
+<button class="btn-light" onclick="loadAlerts()">
+Refresh Alerts
+</button>
+
+</div>
+
+
+<div class="alert-summary">
+
+<div class="alert-count">
+<small>Critical</small>
+<strong id="criticalCount">0</strong>
+</div>
+
+<div class="alert-count">
+<small>Warning</small>
+<strong id="warningCount">0</strong>
+</div>
+
+<div class="alert-count">
+<small>Info</small>
+<strong id="infoCount">0</strong>
+</div>
+
+<div class="alert-count">
+<small>Total</small>
+<strong id="totalAlerts">0</strong>
+</div>
+
+</div>
+
+
+<div id="events">
+<div class="status">
+Loading alerts...
+</div>
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- REPORTS -->
+
+<section class="card" id="reports">
+
+<div class="eyebrow">
+REPORTING
+</div>
+
+<h2>Reports</h2>
+
+<p class="sub">
+Health, maintenance and operational reporting.
+</p>
+
+
+<div class="grid" style="grid-template-columns:repeat(3,1fr)">
+
+<div class="card">
+
+<h3>📊 Daily Report</h3>
+
+<p class="sub">
+Daily telemetry, prediction and health summary.
+</p>
+
+<button class="btn" onclick="generateReport('daily')">
+Generate Report
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>🔧 Maintenance Report</h3>
+
+<p class="sub">
+Maintenance recommendations and asset condition.
+</p>
+
+<button class="btn" onclick="generateReport('maintenance')">
+Generate Report
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>❤️ Health Summary</h3>
+
+<p class="sub">
+Health score, failure probability and RUL.
+</p>
+
+<button class="btn" onclick="generateReport('health')">
+Generate Report
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<br>
+
+
+<!-- API STATUS -->
+
+<section class="card">
+
+<div class="eyebrow">
+SYSTEM STATUS
+</div>
+
+<h2>Backend Connection</h2>
+
+<p class="sub">
+These are the exact APIs used by this dashboard.
+</p>
+
+<div class="api-grid" id="apiStatus">
+</div>
+
+</section>
+
+</main>
+
+
+<script>
+
+/* ============================================================
+   CONFIGURATION
+============================================================ */
+
+const FACILITY_ID = 1;
+
+const state = {
+    telemetry:{},
+    twin:{},
+    telemetryHistory:[],
+    healthHistory:[]
+};
+
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function $(id){
+    return document.getElementById(id);
+}
+
+
+function setText(id,value){
+    const el=$(id);
+    if(el) el.textContent=value;
+}
+
+
+function number(value){
+    if(value===null || value===undefined || value==="") return null;
+
+    const n=Number(value);
+
+    return Number.isFinite(n) ? n : null;
+}
+
+
+function format(value,digits=2){
+
+    const n=number(value);
+
+    if(n===null) return "--";
+
+    return n.toFixed(digits);
+}
+function parseUTC(value){
+
+    if(!value) return null;
+
+    let s=String(value);
+
+    // Backend sends UTC without a timezone marker
+    if(!/T.*(Z|[+-]\d{2}:?\d{2})$/i.test(s)){
+        s+="Z";
+    }
+
+    return new Date(s);
+}
+
+async function api(url,options={}){
+
+    const response=await fetch(url,{
+        headers:{
+            "Content-Type":"application/json"
+        },
+        ...options
+    });
+
+    const text=await response.text();
+
+    let data={};
+
+    try{
+        data=JSON.parse(text);
+    }catch{
+        throw new Error("Invalid server response");
+    }
+
+    if(!response.ok || data.success===false){
+        throw new Error(data.error || ("HTTP "+response.status));
+    }
+
+    return data;
+}
+
+
+/* ============================================================
+   TELEMETRY
+============================================================ */
+
+function normalizeTelemetry(raw){
+
+    raw=raw || {};
+
+    function value(name,alternate){
+
+        const x=raw[name] ?? raw[alternate];
+
+        if(x && typeof x==="object"){
+            return x.value;
+        }
+
+        return x;
+    }
+
+    return {
+
+        ambient_temperature:value(
+            "ambient_temperature",
+            "temperature"
+        ),
+
+        module_temperature:value(
+            "module_temperature",
+            "moduleTemperature"
+        ),
+
+        voltage:value("voltage"),
+
+        current:value("current"),
+
+        irradiance:value(
+            "irradiance",
+            "light_intensity"
+        ),
+
+        vibration:value("vibration"),
+
+        power:value("power")
+
+    };
+}
+
+
+function renderTelemetry(raw){
+
+    const t=normalizeTelemetry(raw);
+
+    state.telemetry=t;
+
+
+    setText("temperature",format(t.ambient_temperature));
+    setText("moduleTemperature",format(t.module_temperature));
+    setText("voltage",format(t.voltage));
+    setText("current",format(t.current));
+    setText("irradiance",format(t.irradiance));
+    setText("vibration",format(t.vibration));
+
+
+    let power=t.power;
+
+    if(power===null){
+
+        const v=number(t.voltage);
+        const c=number(t.current);
+
+        if(v!==null && c!==null){
+            power=v*c;
+        }
+    }
+
+    setText("power",format(power));
+
+
+    setText(
+        "telemetryStatus",
+        "Live telemetry received at "+
+        new Date().toLocaleTimeString()
+    );
+
+
+    state.telemetryHistory.push({
+
+        time:new Date(),
+
+        temperature:number(t.ambient_temperature) || 0,
+
+        voltage:number(t.voltage) || 0,
+
+        current:number(t.current) || 0,
+
+        power:number(power) || 0
+
+    });
+
+
+    if(state.telemetryHistory.length>30){
+        state.telemetryHistory.shift();
+    }
+
+
+    drawTelemetryChart();
+
+    calculateMaintenance();
+
+    calculateXAI();
+}
+
+
+async function loadTelemetry(){
+
+    try{
+
+        const data=await api(
+            "/api/telemetry/latest?facility_id="+FACILITY_ID
+        );
+
+        renderTelemetry(data.telemetry);
+
+        setApiStatus(
+            "telemetryApi",
+            true
+        );
+
+        return true;
+
+    }catch(error){
+
+        setText(
+            "telemetryStatus",
+            "Telemetry API error: "+error.message
+        );
+
+        setApiStatus(
+            "telemetryApi",
+            false,
+            error.message
+        );
+
+        return false;
+    }
+}
+
+
+/* ============================================================
+   DIGITAL TWIN
+============================================================ */
+
+function extractTwin(data){
+
+    const twin=data.digital_twin || data || {};
+
+    const health=twin.health || {};
+
+    const snapshot=twin.snapshot || {};
+
+    const snapshotHealth=snapshot.health || {};
+
+    return {
+
+        health:{
+
+            score:health.score ?? snapshotHealth.score,
+
+            failure:
+                health.failure_probability ??
+                snapshotHealth.failure_probability,
+
+            rul:
+                health.rul ??
+                snapshotHealth.rul,
+
+            status:
+                health.status ??
+                snapshotHealth.status ??
+                "Unknown"
+
+        },
+
+        risk:
+            twin.risk?.level ??
+            snapshot.risk?.level ??
+            "Unknown",
+
+        recommendation:
+            twin.maintenance_recommendation ??
+            snapshot.maintenance_recommendation ??
+            "Unknown",
+
+        device:
+            twin.device_id ??
+            snapshot.device_id ??
+            "SOLAR-ESP32-001",
+
+        sync:
+            twin.synchronized_at ??
+            snapshot.synchronized_at,
+
+        telemetry:
+            twin.telemetry ??
+            snapshot.telemetry ??
+            {}
+
+    };
+}
+
+
+function renderTwin(data){
+
+    const t=extractTwin(data);
+
+    state.twin=t;
+
+
+    const h=t.health;
+
+
+    setText(
+        "health",
+        h.score!==null && h.score!==undefined
+        ? format(h.score,1)+"%"
+        : "--"
+    );
+
+
+    setText(
+        "failure",
+        h.failure!==null && h.failure!==undefined
+        ? format(h.failure,2)+"%"
+        : "--"
+    );
+
+
+    setText(
+        "failure2",
+        h.failure!==null && h.failure!==undefined
+        ? format(h.failure,2)+"%"
+        : "--"
+    );
+
+
+    setText(
+        "rul",
+        h.rul!==null && h.rul!==undefined
+        ? format(h.rul,0)
+        : "--"
+    );
+
+
+    setText(
+        "rul2",
+        h.rul!==null && h.rul!==undefined
+        ? format(h.rul,0)+" days"
+        : "--"
+    );
+
+
+    setText(
+        "healthCircle",
+        h.score!==null && h.score!==undefined
+        ? format(h.score,0)
+        : "--"
+    );
+
+
+    setText(
+        "healthStatus",
+        h.status || "Unknown"
+    );
+
+
+    setText(
+        "risk",
+        t.risk || "--"
+    );
+
+
+    setText(
+        "recommendation",
+        t.recommendation || "--"
+    );
+
+
+    setText(
+        "twinState",
+        "Synchronized"
+    );
+
+
+    setText(
+        "device",
+        t.device
+    );
+
+
+    if(t.sync){
+
+        const date=parseUTC(t.sync);
+
+        setText(
+            "lastSync",
+            date.toLocaleString()
+        );
+
+        setText(
+            "syncTime",
+            date.toLocaleTimeString()
+        );
+
+    }
+
+
+    const badge=$("statusBadge");
+
+    const risk=String(t.risk).toLowerCase();
+
+    const status=String(h.status).toLowerCase();
+
+
+    badge.textContent=h.status || "UNKNOWN";
+
+
+    if(
+        risk.includes("high") ||
+        status.includes("critical")
+    ){
+
+        badge.className="badge bad";
+
+    }else if(
+        risk.includes("medium") ||
+        risk.includes("moderate") ||
+        status.includes("warning")
+    ){
+
+        badge.className="badge warn";
+
+    }else{
+
+        badge.className="badge ok";
+
+    }
+
+
+    setText(
+        "predictionHealth",
+        h.score!==undefined
+        ? format(h.score,1)
+        : "--"
+    );
+
+
+    setText(
+        "predictionFailure",
+        h.failure!==undefined
+        ? format(h.failure,2)+"%"
+        : "--"
+    );
+
+
+    setText(
+        "predictionRul",
+        h.rul!==undefined
+        ? format(h.rul,0)+" days"
+        : "--"
+    );
+
+
+    if(h.score!==null && h.score!==undefined){
+
+        state.healthHistory.push({
+
+            time:new Date(),
+
+            health:number(h.score) || 0
+
+        });
+
+        if(state.healthHistory.length>30){
+            state.healthHistory.shift();
+        }
+
+    }
+
+
+    drawHealthChart();
+
+    calculateMaintenance();
+
+    calculateXAI();
+}
+
+
+async function loadTwin(){
+
+    try{
+
+        const data=await api(
+            "/api/digital-twin?facility_id="+FACILITY_ID
+        );
+
+        renderTwin(data);
+
+        setApiStatus(
+            "twinApi",
+            true
+        );
+
+        return true;
+
+    }catch(error){
+
+        setText(
+            "twinState",
+            "API Error"
+        );
+
+        setApiStatus(
+            "twinApi",
+            false,
+            error.message
+        );
+
+        return false;
+    }
+}
+
+
+/* ============================================================
+   SYNCHRONIZE DIGITAL TWIN
+============================================================ */
+
+async function synchronizeTwin(){
+
+    try{
+
+        await api(
+            "/api/digital-twin/synchronize",
+            {
+                method:"POST",
+                body:JSON.stringify({
+                    facility_id:FACILITY_ID
+                })
+            }
+        );
+
+        await loadTwin();
+
+        await loadHistory();
+
+        await loadAlerts();
+
+        alert(
+            "Digital Twin synchronized successfully."
+        );
+
+    }catch(error){
+
+        alert(
+            "Synchronization failed: "+
+            error.message
+        );
+
+    }
+}
+
+
+/* ============================================================
+   MODEL
+============================================================ */
+
+async function loadModel(){
+
+    try{
+
+        const data=await api(
+            "/api/model-status"
+        );
+
+        const model=data.model || {};
+
+        setText(
+            "model",
+            model.available ? "Ready" : "Unavailable"
+        );
+
+        setText(
+            "modelName",
+            model.name ||
+            "EcoTwin Health Model"
+        );
+
+        setText(
+            "modelFormat",
+            model.format ||
+            "Keras"
+        );
+
+        setText(
+            "tflite",
+            model.tflite_available
+            ? "Available"
+            : "Not Available"
+        );
+
+        setApiStatus(
+            "modelApi",
+            true
+        );
+
+    }catch(error){
+
+        setText(
+            "model",
+            "Unavailable"
+        );
+
+        setText(
+            "modelFormat",
+            "--"
+        );
+
+        setText(
+            "tflite",
+            "--"
+        );
+
+        setApiStatus(
+            "modelApi",
+            false,
+            error.message
+        );
+    }
+}
+
+
+/* ============================================================
+   MAINTENANCE RECOMMENDATION
+============================================================ */
+
+function calculateMaintenance(){
+
+    const t=state.telemetry;
+
+    const twin=state.twin;
+
+    const health=number(
+        twin.health?.score
+    );
+
+    const failure=number(
+        twin.health?.failure
+    );
+
+    const rul=number(
+        twin.health?.rul
+    );
+
+    const vibration=number(
+        t.vibration
+    );
+
+    const moduleTemp=number(
+        t.module_temperature
+    );
+
+    let recommendation="Continued Operation";
+
+    let reason="All available operating indicators are within the normal operating range.";
+
+    let risk="Low";
+
+
+    if(
+        health!==null &&
+        health<50
+    ){
+
+        recommendation="Immediate Maintenance";
+
+        reason="Health score is below 50.";
+
+        risk="High";
+
+    }else if(
+        failure!==null &&
+        failure>=50
+    ){
+
+        recommendation="Immediate Maintenance";
+
+        reason="Failure probability is high.";
+
+        risk="High";
+
+    }else if(
+        moduleTemp!==null &&
+        moduleTemp>=80
+    ){
+
+        recommendation="Inspection Schedule";
+
+        reason="Module temperature is above the 80°C inspection threshold.";
+
+        risk="High";
+
+    }else if(
+        vibration!==null &&
+        vibration>=5
+    ){
+
+        recommendation="Inspection Schedule";
+
+        reason="Vibration exceeds the 5 mm/s inspection threshold.";
+
+        risk="Medium";
+
+    }else if(
+        rul!==null &&
+        rul<30
+    ){
+
+        recommendation="Inspection Schedule";
+
+        reason="Remaining useful life is below 30 days.";
+
+        risk="Medium";
+
+    }else if(
+        health!==null &&
+        health<75
+    ){
+
+        recommendation="Cleaning Recommendation";
+
+        reason="Health score indicates degraded operating condition.";
+
+        risk="Medium";
+    }
+
+
+    setText(
+        "maintenanceRecommendation",
+        recommendation
+    );
+
+    setText(
+        "maintenanceReason",
+        reason
+    );
+
+    setText(
+        "maintenanceHealth",
+        health!==null
+        ? format(health,1)
+        : "--"
+    );
+
+    setText(
+        "maintenanceFailure",
+        failure!==null
+        ? format(failure,2)+"%"
+        : "--"
+    );
+
+    setText(
+        "maintenanceRul",
+        rul!==null
+        ? format(rul,0)+" days"
+        : "--"
+    );
+
+    setText(
+        "maintenanceRisk",
+        risk
+    );
+}
+
+
+/* ============================================================
+   XAI
+============================================================ */
+
+function calculateXAI(){
+
+    if(state.xai) return;
+    const t=state.telemetry;
+
+    const features=[
+
+        [
+            "Ambient Temperature",
+            deviation(
+                t.ambient_temperature,
+                25,
+                10
+            )
+        ],
+
+        [
+            "Module Temperature",
+            deviation(
+                t.module_temperature,
+                45,
+                20
+            )
+        ],
+
+        [
+            "Voltage",
+            deviation(
+                t.voltage,
+                20,
+                5
+            )
+        ],
+
+        [
+            "Current",
+            deviation(
+                t.current,
+                0.85,
+                0.5
+            )
+        ],
+
+        [
+            "Irradiance",
+            deviation(
+                t.irradiance,
+                800,
+                400
+            )
+        ],
+
+        [
+            "Vibration",
+            deviation(
+                t.vibration,
+                1,
+                2
+            )
+        ]
+
+    ];
+
+
+    let total=features.reduce(
+        (sum,x)=>sum+x[1],
+        0
+    );
+
+
+    if(total<=0){
+        total=1;
+    }
+
+
+    $("xaiBars").innerHTML=features.map(
+        feature=>{
+
+            const percentage=
+                feature[1]/total*100;
+
+            return `
+            <div class="xai-row">
+
+                <span>${feature[0]}</span>
+
+                <div class="bar">
+                    <i style="width:${Math.min(100,percentage)}%"></i>
+                </div>
+
+                <b>${percentage.toFixed(1)}%</b>
+
+            </div>
+            `;
+
+        }
+    ).join("");
+
+
+    const health=
+        number(state.twin.health?.score);
+
+
+    let confidence=70;
+
+
+    if(health!==null){
+
+        confidence=Math.max(
+            50,
+            Math.min(
+                99,
+                health
+            )
+        );
+
+    }
+
+
+    setText(
+        "confidence",
+        confidence.toFixed(0)+"%"
+    );
+
+
+    setText(
+        "xaiText",
+        "Feature contribution is calculated from deviation of the current telemetry values from normal operating reference ranges. Larger deviations receive higher contribution."
+    );
+}
+
+async function loadXAI(){
+
+    try{
+
+        const list=await api(
+            "/api/predictions?facility_id="+FACILITY_ID+"&limit=1"
+        );
+
+        const p=(list.predictions||[])[0];
+
+        if(!p) return;
+
+        const data=await api(
+            "/api/predictions/"+p.id+"/explanation"
+        );
+
+        const x=data.explanation;
+
+        state.xai=x;
+
+        $("xaiBars").innerHTML=x.features.map(f=>`
+            <div class="xai-row">
+                <span>${f.display_name}</span>
+                <div class="bar">
+                    <i style="width:${Math.min(100,f.contribution_percentage)}%"></i>
+                </div>
+                <b>${Number(f.contribution_percentage).toFixed(1)}%</b>
+            </div>
+        `).join("");
+
+        setText("confidence",format(x.confidence,0)+"%");
+
+        setText("xaiText",x.explanation+" Method: "+x.method+".");
+
+    }catch(error){
+        // keep the browser-side estimate if no explanation exists yet
+    }
+}
+
+function deviation(value,normal,tolerance){
+
+    const n=number(value);
+
+    if(n===null){
+        return 0;
+    }
+
+    return Math.min(
+        1,
+        Math.abs(n-normal)/tolerance
+    );
+}
+
+
+/* ============================================================
+   CHARTS
+============================================================ */
+
+function drawTelemetryChart(){
+
+    const svg=$("telemetryChart");
+
+    const data=state.telemetryHistory;
+
+
+    svg.innerHTML="";
+
+
+    svg.innerHTML+=`
+        <line
+            x1="45"
+            y1="225"
+            x2="680"
+            y2="225"
+            stroke="#b7c8c3"
+        />
+
+        <line
+            x1="45"
+            y1="25"
+            x2="45"
+            y2="225"
+            stroke="#b7c8c3"
+        />
+
+        <text x="50" y="18" font-size="11">
+            Temperature / Voltage / Current
+        </text>
+    `;
+
+
+    if(data.length<2){
+
+        svg.innerHTML+=`
+            <text
+                x="270"
+                y="130"
+                font-size="12"
+            >
+                Waiting for live telemetry...
+            </text>
+        `;
+
+        return;
+    }
+
+
+    drawSeries(
+        svg,
+        data.map(x=>x.temperature),
+        "#087f5b",
+        45,
+        680,
+        25,
+        225,
+        0,
+        100
+    );
+
+
+    drawSeries(
+        svg,
+        data.map(x=>x.voltage),
+        "#e67e22",
+        45,
+        680,
+        25,
+        225,
+        0,
+        100
+    );
+
+
+    drawSeries(
+        svg,
+        data.map(x=>x.current),
+        "#2463a6",
+        45,
+        680,
+        25,
+        225,
+        0,
+        100
+    );
+
+
+    svg.innerHTML+=`
+        <circle cx="55" cy="240" r="4" fill="#087f5b"/>
+        <text x="65" y="244" font-size="9">Temperature</text>
+
+        <circle cx="150" cy="240" r="4" fill="#e67e22"/>
+        <text x="160" y="244" font-size="9">Voltage</text>
+
+        <circle cx="230" cy="240" r="4" fill="#2463a6"/>
+        <text x="240" y="244" font-size="9">Current</text>
+    `;
+}
+
+
+function drawSeries(
+    svg,
+    values,
+    color,
+    left,
+    right,
+    top,
+    bottom,
+    min,
+    max
+){
+
+    if(values.length<2) return;
+
+
+    const points=values.map(
+        (value,index)=>{
+
+            const x=
+                left+
+                index*
+                (right-left)/
+                (values.length-1);
+
+
+            const y=
+                bottom-
+                (
+                    (value-min)/
+                    (max-min)
+                )*
+                (bottom-top);
+
+
+            return `${x},${y}`;
+
+        }
+    ).join(" ");
+
+
+    svg.innerHTML+=`
+        <polyline
+            points="${points}"
+            fill="none"
+            stroke="${color}"
+            stroke-width="2"
+        />
+    `;
+}
+
+
+function drawHealthChart(){
+
+    const svg=$("healthChart");
+
+    const data=state.healthHistory;
+
+    svg.innerHTML=`
+        <line x1="45" y1="225" x2="470" y2="225"
+              stroke="#b7c8c3"/>
+
+        <line x1="45" y1="25" x2="45" y2="225"
+              stroke="#b7c8c3"/>
+
+        <text x="48" y="18" font-size="11">
+            Health Score
+        </text>
+
+        <text x="15" y="30" font-size="9">
+            100
+        </text>
+
+        <text x="25" y="225" font-size="9">
+            0
+        </text>
+    `;
+
+
+    if(data.length<2){
+
+        svg.innerHTML+=`
+            <text
+                x="150"
+                y="130"
+                font-size="12"
+            >
+                Waiting for health data...
+            </text>
+        `;
+
+        return;
+    }
+
+
+    const points=data.map(
+        (item,index)=>{
+
+            const x=
+                45+
+                index*
+                425/
+                (data.length-1);
+
+
+            const y=
+                225-
+                (
+                    item.health/100
+                )*200;
+
+
+            return `${x},${y}`;
+
+        }
+    ).join(" ");
+
+
+    svg.innerHTML+=`
+        <polyline
+            points="${points}"
+            fill="none"
+            stroke="#087f5b"
+            stroke-width="3"
+        />
+    `;
+}
+
+
+/* ============================================================
+   HISTORY
+============================================================ */
+
+async function loadHistory(){
+
+    try{
+
+        const data=await api(
+            "/api/digital-twin/history?facility_id="+
+            FACILITY_ID+
+            "&limit=30"
+        );
+
+
+        const states=data.states || [];
+
+
+        if(!states.length){
+
+            $("historyBody").innerHTML=`
+                <tr>
+                    <td colspan="6">
+                        No Digital Twin states stored yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        $("historyBody").innerHTML=
+            states.map(
+                state=>{
+
+                    const h=state.health || {};
+                    const r=state.risk || {};
+
+
+                    return `
+                    <tr>
+
+                        <td>
+                            ${
+                                state.synchronized_at
+                                ? parseUTC(state.synchronized_at).toLocaleString()
+                                : "--"
+                            }
+                        </td>
+
+                        <td>
+                            ${
+                                h.score!==undefined
+                                ? format(h.score,1)+"%"
+                                : "--"
+                            }
+                        </td>
+
+                        <td>
+                            ${
+                                h.failure_probability!==undefined
+                                ? format(
+                                    h.failure_probability,
+                                    2
+                                  )+"%"
+                                : "--"
+                            }
+                        </td>
+
+                        <td>
+                            ${
+                                h.rul!==undefined
+                                ? format(h.rul,0)+" days"
+                                : "--"
+                            }
+                        </td>
+
+                        <td>
+                            ${r.level || "--"}
+                        </td>
+
+                        <td>
+                            ${
+                                state.maintenance_recommendation
+                                || "--"
+                            }
+                        </td>
+
+                    </tr>
+                    `;
+
+                }
+            ).join("");
+
+
+        setApiStatus(
+            "historyApi",
+            true
+        );
+
+
+    }catch(error){
+
+        $("historyBody").innerHTML=`
+            <tr>
+                <td colspan="6">
+                    History API error: ${error.message}
+                </td>
+            </tr>
+        `;
+
+        setApiStatus(
+            "historyApi",
+            false,
+            error.message
+        );
+    }
+}
+
+
+/* ============================================================
+   ALERTS
+============================================================ */
+
+async function loadAlerts(){
+
+    try{
+
+        const data=await api(
+            "/api/alerts?facility_id="+
+            FACILITY_ID+
+            "&limit=30"
+        );
+
+
+        const alerts=data.alerts || [];
+
+
+        let critical=0;
+        let warning=0;
+        let info=0;
+
+
+        alerts.forEach(
+            alert=>{
+
+                const severity=
+                    String(
+                        alert.severity || "Info"
+                    ).toLowerCase();
+
+
+                if(severity==="critical"){
+                    critical++;
+                }else if(severity==="warning"){
+                    warning++;
+                }else{
+                    info++;
+                }
+
+            }
+        );
+
+
+        setText(
+            "criticalCount",
+            critical
+        );
+
+        setText(
+            "warningCount",
+            warning
+        );
+
+        setText(
+            "infoCount",
+            info
+        );
+
+        setText(
+            "totalAlerts",
+            alerts.length
+        );
+
+
+        if(!alerts.length){
+
+            $("events").innerHTML=`
+                <div class="status">
+                    No alerts recorded.
+                </div>
+            `;
+
+        }else{
+
+            $("events").innerHTML=
+                alerts.map(
+                    alert=>{
+
+                        const severity=
+                            String(
+                                alert.severity ||
+                                "Info"
+                            ).toLowerCase();
+
+
+                        return `
+                        <div class="event ${severity}">
+
+                            <b>
+                                ${
+                                    alert.alert_type ||
+                                    "System Alert"
+                                }
+                            </b>
+
+                            <br>
+
+                            ${
+                                alert.message ||
+                                "No alert message."
+                            }
+
+                            <br>
+
+                            <small>
+
+                                ${
+                                    alert.created_at
+                                    ? parseUTC(alert.created_at).toLocaleString()
+                                    : "--"
+                                }
+
+                                •
+
+                                ${
+                                    alert.status ||
+                                    "Active"
+                                }
+
+                                •
+
+                                Severity:
+                                ${
+                                    alert.severity ||
+                                    "Info"
+                                }
+
+                            </small>
+
+                        </div>
+                        `;
+
+                    }
+                ).join("");
+
+        }
+
+
+        setApiStatus(
+            "alertsApi",
+            true
+        );
+
+
+    }catch(error){
+
+        $("events").innerHTML=`
+            <div class="status">
+                Alert API error: ${error.message}
+            </div>
+        `;
+
+        setApiStatus(
+            "alertsApi",
+            false,
+            error.message
+        );
+    }
+}
+
+
+/* ============================================================
+   API STATUS
+============================================================ */
+
+function setApiStatus(
+    id,
+    ok,
+    message=""
+){
+
+    const el=$(id);
+
+    if(!el) return;
+
+
+    el.innerHTML=
+        ok
+        ? `<span class="api-ok">CONNECTED</span>`
+        : `<span class="api-error">ERROR: ${message}</span>`;
+}
+
+
+async function checkEndpoint(
+    id,
+    name,
+    url
+){
+
+    const box=document.createElement("div");
+
+    box.className="api-item";
+
+    box.innerHTML=
+        `<b>${name}</b><br>Checking...`;
+
+
+    $("apiStatus").appendChild(box);
+
+
+    try{
+
+        await api(url);
+
+        box.innerHTML=
+            `<b>${name}</b><br>
+             <span class="api-ok">CONNECTED</span>`;
+
+    }catch(error){
+
+        box.innerHTML=
+            `<b>${name}</b><br>
+             <span class="api-error">
+             ERROR: ${error.message}
+             </span>`;
+    }
+}
+
+
+async function checkAPIs(){
+
+    $("apiStatus").innerHTML="";
+
+
+    await checkEndpoint(
+        "backendApi",
+        "Backend",
+        "/api/health"
+    );
+
+
+    await checkEndpoint(
+        "telemetryApi",
+        "Live Telemetry",
+        "/api/telemetry/latest?facility_id=1"
+    );
+
+
+    await checkEndpoint(
+        "twinApi",
+        "Digital Twin",
+        "/api/digital-twin?facility_id=1"
+    );
+
+
+    await checkEndpoint(
+        "historyApi",
+        "Twin History",
+        "/api/digital-twin/history?facility_id=1"
+    );
+
+
+    await checkEndpoint(
+        "alertsApi",
+        "Alerts",
+        "/api/alerts?facility_id=1"
+    );
+
+
+    await checkEndpoint(
+        "modelApi",
+        "ML Model",
+        "/api/model-status"
+    );
+}
+
+
+/* ============================================================
+   REPORT
+============================================================ */
+
+/* ============================================================
+   ECOTWIN-AI REPORTING
+   Uses the actual Flask backend endpoints:
+   POST /api/reports/generate
+   GET  /api/reports
+   GET  /api/reports/<id>
+   GET  /api/reports/<id>/download
+============================================================ */
+
+async function generateReport(type) {
+
+    const reportNames = {
+        daily: "Daily Telemetry Report",
+        maintenance: "Maintenance Report",
+        health: "Health Summary Report"
+    };
+
+    const reportType = reportNames[type];
+
+    if (!reportType) {
+        alert("Invalid report type.");
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/reports/generate",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    facility_id: FACILITY_ID,
+                    report_type: type,
+                    title: reportType
+                })
+            }
+        );
+
+        const text = await response.text();
+
+        let data = {};
+
+        try {
+            data = JSON.parse(text);
+        }
+        catch (e) {
+            console.error("Invalid report response:", text);
+            throw new Error("Server returned an invalid response.");
+        }
+
+        if (!response.ok || data.success === false) {
+            throw new Error(
+                data.error ||
+                data.message ||
+                ("HTTP " + response.status)
+            );
+        }
+
+        const report =
+            data.report ||
+            data.data ||
+            data;
+
+        const reportId =
+            report.id ||
+            data.report_id;
+
+        alert(
+            "Report generated successfully.\n\n" +
+            reportType +
+            (reportId ? "\nReport ID: " + reportId : "")
+        );
+
+        await loadReports();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Report generation error:",
+            error
+        );
+
+        alert(
+            "Unable to generate report.\n\n" +
+            error.message
+        );
+    }
+}
+
+
+/* ============================================================
+   LOAD GENERATED REPORTS
+============================================================ */
+
+async function loadReports() {
+
+    try {
+
+        const data = await api(
+            "/api/reports?facility_id=" +
+            FACILITY_ID
+        );
+
+        const reports =
+            Array.isArray(data.reports)
+                ? data.reports
+                : [];
+
+        let container =
+            document.getElementById(
+                "reportsList"
+            );
+
+        /*
+         * The original dashboard does not have a
+         * reportsList element, so create one automatically.
+         */
+
+        if (!container) {
+
+            const reportsSection =
+                document.getElementById("reports");
+
+            if (!reportsSection) {
+                return;
+            }
+
+            container =
+                document.createElement("div");
+
+            container.id = "reportsList";
+
+            container.style.marginTop = "20px";
+
+            reportsSection.appendChild(
+                container
+            );
+        }
+
+
+        if (!reports.length) {
+
+            container.innerHTML = `
+                <div class="status">
+                    No reports generated yet.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML = `
+            <h3 style="margin-top:20px;">
+                Generated Reports
+            </h3>
+
+            <div class="history-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${
+                            reports.map(
+                                report => `
+
+                                <tr>
+
+                                    <td>
+                                        ${
+                                            report.id ??
+                                            "--"
+                                        }
+                                    </td>
+
+                                    <td>
+                                        ${
+                                            escapeHtmlSafe(
+                                                report.title ||
+                                                "EcoTwin-AI Report"
+                                            )
+                                        }
+                                    </td>
+
+                                    <td>
+                                        ${
+                                            escapeHtmlSafe(
+                                                report.report_type ||
+                                                "--"
+                                            )
+                                        }
+                                    </td>
+
+                                    <td>
+                                        ${
+                                            report.created_at
+                                            ? parseUTC(report.created_at).toLocaleString()
+                                            : "--"
+                                        }
+                                    </td>
+
+                                    <td>
+
+                                        ${
+                                            report.id
+                                            ? `
+                                                
+
+                                                <button
+                                                    class="btn"
+                                                    onclick="downloadReport(${report.id})"
+                                                >
+                                                    Download
+                                                </button>
+                                              `
+                                            : "--"
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            `
+                            ).join("")
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Report loading error:",
+            error
+        );
+
+    }
+}
+
+
+/* ============================================================
+   VIEW REPORT
+============================================================ */
+
+async function viewReport(reportId) {
+
+    try {
+
+        const data = await api(
+            "/api/reports/" +
+            reportId
+        );
+
+        const report =
+            data.report ||
+            data;
+
+        const title =
+            report.title ||
+            "EcoTwin-AI Report";
+
+        const content =
+            report.content ||
+            "No report content available.";
+
+        const popup =
+            window.open(
+                "",
+                "_blank",
+                "width=900,height=700"
+            );
+
+        if (!popup) {
+
+            alert(
+                "Please allow popups to view the report."
+            );
+
+            return;
+        }
+
+        popup.document.write(`
+            <!DOCTYPE html>
+
+            <html>
+
+            <head>
+
+                <title>
+                    ${escapeHtmlSafe(title)}
+                </title>
+
+                <style>
+
+                    body {
+                        font-family:
+                            Arial,
+                            sans-serif;
+
+                        margin: 40px;
+
+                        color: #17352f;
+
+                        background: #f5faf8;
+                    }
+
+                    .report {
+                        background: white;
+
+                        padding: 30px;
+
+                        border-radius: 12px;
+
+                        box-shadow:
+                            0 2px 12px
+                            rgba(0,0,0,.08);
+                    }
+
+                    h1 {
+                        color: #087f5b;
+                    }
+
+                    .content {
+                        white-space: pre-wrap;
+
+                        line-height: 1.6;
+                    }
+
+                </style>
+
+            </head>
+
+            <body>
+
+                <div class="report">
+
+                    <h1>
+                        ${escapeHtmlSafe(title)}
+                    </h1>
+
+                    <p>
+                        <b>EcoTwin-AI Solar Energy Facility</b>
+                    </p>
+
+                    <hr>
+
+                    <div class="content">
+                        ${escapeHtmlSafe(content)}
+                    </div>
+
+                </div>
+
+            </body>
+
+            </html>
+        `);
+
+        popup.document.close();
+
+    }
+    catch (error) {
+
+        alert(
+            "Unable to open report:\n\n" +
+            error.message
+        );
+
+    }
+}
+
+
+/* ============================================================
+   DOWNLOAD REPORT
+============================================================ */
+
+function downloadReport(reportId) {
+
+    const url =
+        "/api/reports/" +
+        reportId +
+        "/download";
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.target = "_blank";
+
+    link.download =
+        "EcoTwin-AI-report-" +
+        reportId;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+}
+
+
+/* ============================================================
+   SAFE HTML
+============================================================ */
+
+function escapeHtmlSafe(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+/* ============================================================
+   INTERACTIVE SOLAR PANELS
+============================================================ */
+
+document
+.querySelectorAll(".panel")
+.forEach(
+    panel=>{
+
+        panel.addEventListener(
+            "click",
+            ()=>{
+
+                document
+                .querySelectorAll(".panel")
+                .forEach(
+                    p=>p.classList.remove(
+                        "active"
+                    )
+                );
+
+
+                panel.classList.add("active");
+
+
+                const t=
+                    state.telemetry;
+
+
+                $("selectedInfo").textContent=
+                    panel.dataset.name+
+                    " selected • "+
+                    "Power: "+
+                    format(t.power)+" W • "+
+                    "Voltage: "+
+                    format(t.voltage)+" V • "+
+                    "Current: "+
+                    format(t.current)+" A";
+
+            }
+        );
+
+    }
+);
+
+
+$("inverter").addEventListener(
+    "click",
+    ()=>{
+
+        const t=state.telemetry;
+
+
+        $("selectedInfo").textContent=
+            "Digital Inverter selected • "+
+            "Power: "+
+            format(t.power)+" W • "+
+            "Voltage: "+
+            format(t.voltage)+" V";
+
+    }
+);
+
+
+/* ============================================================
+   COMPLETE REFRESH
+============================================================ */
+
+async function refreshAll(){
+
+    
+    await loadTelemetry();
+
+    await loadTwin();
+
+    await loadModel();
+
+    await loadHistory();
+
+    await loadAlerts();
+    await loadXAI();
+
+}
+
+
+/* ============================================================
+   START
+============================================================ */
+
+refreshAll();
+
+checkAPIs();
+
+
+/*
+   Refresh live telemetry every 5 seconds.
+*/
+setInterval(
+    loadTelemetry,
+    5000
+);
+
+
+/*
+   Refresh Digital Twin every 10 seconds.
+*/
+setInterval(
+    loadTwin,
+    10000
+);
+
+
+/*
+   Refresh history and alerts every 15 seconds.
+*/
+setInterval(
+    loadHistory,
+    15000
+);
+
+setInterval(
+    loadAlerts,
+    15000
+);
+setInterval(loadXAI, 10000);
+
+/* ============================================================
+   RESET DASHBOARD
+============================================================ */
+
+async function resetDashboard(){
+
+    if(!confirm(
+        "Reset the dashboard?\n\n"+
+        "This permanently deletes the stored telemetry, "+
+        "predictions, twin history and alerts."
+    )) return;
+
+    try{
+
+        await api("/api/digital-twin/reset",{
+            method:"POST",
+            body:JSON.stringify({facility_id:FACILITY_ID})
+        });
+
+    }catch(error){
+
+        alert("Reset failed: "+error.message);
+        return;
+    }
+
+    // Clear in-memory data
+    state.telemetry={};
+    state.twin={};
+    state.telemetryHistory=[];
+    state.healthHistory=[];
+    state.xai=null;
+
+    // Reset every value on screen
+    [
+        "health","failure","rul","twinState","syncTime",
+        "healthCircle","risk","failure2","rul2","recommendation",
+        "temperature","moduleTemperature","voltage","current",
+        "irradiance","vibration","power",
+        "predictionHealth","predictionFailure","predictionRul",
+        "maintenanceHealth","maintenanceFailure",
+        "maintenanceRul","maintenanceRisk",
+        "confidence","lastSync"
+    ].forEach(id=>setText(id,"--"));
+
+    setText("healthStatus","Waiting for telemetry");
+    setText("telemetryStatus","Waiting for telemetry...");
+    setText("maintenanceRecommendation","Waiting for telemetry");
+    setText("maintenanceReason","Waiting for current sensor values.");
+    setText("xaiText","Waiting for telemetry...");
+
+    ["criticalCount","warningCount","infoCount","totalAlerts"]
+        .forEach(id=>setText(id,"0"));
+
+    // Clear charts, tables and lists
+    [["telemetryChart",""],["healthChart",""],["xaiBars",""]]
+        .forEach(([id,html])=>{
+            const el=$(id);
+            if(el) el.innerHTML=html;
+        });
+
+    const hb=$("historyBody");
+    if(hb) hb.innerHTML=
+        '<tr><td colspan="6">No Digital Twin states stored yet.</td></tr>';
+
+    const ev=$("events");
+    if(ev) ev.innerHTML='<div class="status">No alerts recorded.</div>';
+
+    const badge=$("statusBadge");
+    if(badge){
+        badge.textContent="RESET";
+        badge.className="badge ok";
+    }
+
+    const sel=$("selectedInfo");
+    if(sel) sel.textContent="Selected: Whole Solar Facility";
+
+    document.querySelectorAll(".panel")
+        .forEach(p=>p.classList.remove("active"));
+}
+
+// Floating Reset button (created here, so no HTML edit is needed)
+(function(){
+
+    const btn=document.createElement("button");
+
+    btn.textContent="Reset Dashboard";
+    btn.className="btn";
+    btn.style.cssText=
+        "position:fixed;right:18px;bottom:18px;z-index:200;"+
+        "background:#c62828;box-shadow:0 3px 10px rgba(0,0,0,.3)";
+
+    btn.onclick=resetDashboard;
+
+    document.body.appendChild(btn);
+
+})();
+/* ============================================================
+   DIGITAL TWIN VISUAL UPGRADE
+============================================================ */
+
+(function(){
+
+    if(typeof state==="undefined") return;
+
+    const asset=document.querySelector(".asset");
+    if(!asset) return;
+
+    // ---------- styles ----------
+    const st=document.createElement("style");
+    st.textContent=`
+    .panels{left:50%!important;top:24%!important;transform:translateX(-50%)}
+    .inverter{left:50%!important;top:75%!important;transform:translateX(-50%);z-index:2;border:2px solid #2c5b73}
+    .asset{--flow-speed:1.2s}
+
+    .sun{animation:tw-sun 3s ease-in-out infinite}
+    @keyframes tw-sun{50%{box-shadow:0 0 34px 8px #ffd34d}}
+
+    .cloud1{animation:tw-drift 28s ease-in-out infinite}
+    .cloud2{animation:tw-drift 36s ease-in-out infinite reverse}
+    @keyframes tw-drift{0%,100%{transform:translateX(-20px)}50%{transform:translateX(45px)}}
+
+    .panel{transition:background .8s,border-color .5s}
+
+    .tw-flow{
+        position:absolute;left:50%;top:57%;height:17%;width:6px;
+        transform:translateX(-50%);border-radius:3px;
+        background:repeating-linear-gradient(to bottom,#ffe066 0 8px,transparent 8px 16px);
+        box-shadow:0 0 8px #ffe066;
+        animation:tw-flow var(--flow-speed) linear infinite;
+        transition:opacity .6s;
+    }
+    @keyframes tw-flow{from{background-position:0 0}to{background-position:0 16px}}
+
+    .tw-hud{
+        position:absolute;left:8px;bottom:8px;z-index:3;min-width:120px;
+        background:rgba(10,40,32,.80);color:#fff;border-radius:8px;
+        padding:7px 9px;font-size:9px;line-height:1.55;
+    }
+    .tw-hud em{font-style:normal;font-weight:700;float:right;margin-left:12px}
+    .tw-hud .tw-note{color:#9fd8c4;font-size:8px;margin-top:2px}
+    .tw-dot{
+        display:inline-block;width:7px;height:7px;border-radius:50%;
+        background:#4cff9f;margin-left:5px;animation:tw-blink 1.4s infinite;
+    }
+    @keyframes tw-blink{50%{opacity:.2}}
+
+    .tw-chip{
+        position:absolute;right:8px;bottom:8px;z-index:3;
+        color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;
+        padding:6px 10px;border-radius:20px;background:#607d8b;
+    }
+    .asset[data-level="0"] .tw-chip{background:#087f5b}
+    .asset[data-level="1"] .tw-chip{background:#e5a000}
+    .asset[data-level="2"] .tw-chip{background:#c62828}
+
+    #invPower{font-size:13px;font-weight:800;color:#ffe066;margin-top:3px}
+
+    .asset[data-level="1"] .panel{animation:tw-warn 1.6s ease-in-out infinite}
+    @keyframes tw-warn{50%{box-shadow:0 0 14px 3px #ffd34d}}
+
+    .asset[data-level="2"] .panel{animation:tw-crit .8s ease-in-out infinite}
+    @keyframes tw-crit{0%,100%{opacity:1;box-shadow:0 0 12px 3px #ff5252}50%{opacity:.55;box-shadow:none}}
+    .asset[data-level="2"] .inverter{animation:tw-shake .35s linear infinite}
+    @keyframes tw-shake{25%{translate:-2px 0}75%{translate:2px 0}}
+
+    .health-circle{
+        position:relative;border:none!important;
+        background:conic-gradient(var(--c,#087f5b) calc(var(--p,0)*1%),#dcebe6 0);
+    }
+    .health-circle::before{content:"";position:absolute;inset:9px;background:#fff;border-radius:50%}
+    .health-circle strong,.health-circle span{position:relative}
+    `;
+    document.head.appendChild(st);
+
+    // ---------- extra elements ----------
+    const flow=document.createElement("div");
+    flow.className="tw-flow";
+    asset.appendChild(flow);
+
+    const hud=document.createElement("div");
+    hud.className="tw-hud";
+    hud.innerHTML=`
+        <b>LIVE TWIN<span class="tw-dot"></span></b>
+        <div>Ambient <em id="twAmb">--</em></div>
+        <div>Module* <em id="twMod">--</em></div>
+        <div>Irradiance* <em id="twIrr">--</em></div>
+        <div class="tw-note">* simulated values</div>`;
+    asset.appendChild(hud);
+
+    const chip=document.createElement("div");
+    chip.className="tw-chip";
+    chip.textContent="NO DATA";
+    asset.appendChild(chip);
+
+    const inv=document.getElementById("inverter");
+    const invPower=document.createElement("div");
+    invPower.id="invPower";
+    invPower.textContent="-- W";
+    if(inv) inv.appendChild(invPower);
+
+    const panels=[...document.querySelectorAll(".panel")];
+    const sun=document.querySelector(".sun");
+    const ring=document.querySelector(".health-circle");
+
+    const num=v=>{
+        const x=Number(v);
+        return (v===null||v===undefined||v==="")?null
+            :(Number.isFinite(x)?x:null);
+    };
+
+    // ---------- live update ----------
+    function update(){
+
+        const t=state.telemetry||{};
+        const tw=state.twin||{};
+        const h=tw.health||{};
+
+        const status=String(h.status||"").toLowerCase();
+
+        let level=-1;
+        if(status){
+            if(status.includes("crit")||status.includes("fail")) level=2;
+            else if(status.includes("warn")||status.includes("degrad")) level=1;
+            else level=0;
+        }
+        asset.dataset.level=level;
+
+        const amb=num(t.ambient_temperature);
+        const mod=num(t.module_temperature);
+        const irr=num(t.irradiance);
+        let pw=num(t.power);
+        if(pw===null && num(t.voltage)!==null && num(t.current)!==null){
+            pw=num(t.voltage)*num(t.current);
+        }
+
+        // panel colours = temperature heat map
+        const borders=["#084d75","#084d75","#e5a000","#c62828"];
+        panels.forEach((p,i)=>{
+            const local=(mod!==null?mod:40)+(((i*37)%7)-3)*0.6;
+            const hue=Math.max(5,Math.min(205,205-(local-30)*(200/60)));
+            p.style.background=`hsl(${hue},70%,34%)`;
+            p.style.borderColor=borders[level+1];
+            p.title=(p.dataset.name||"Panel")+": "+local.toFixed(1)+" °C";
+        });
+
+        // sun follows irradiance
+        if(sun && irr!==null){
+            const f=Math.max(0,Math.min(1.2,irr/1000));
+            sun.style.opacity=0.35+0.65*Math.min(1,f);
+            sun.style.transform="scale("+(0.8+0.3*f)+")";
+        }
+
+        // power flow
+        if(pw!==null && pw>0.5 && level!==2){
+            asset.style.setProperty("--flow-speed",
+                Math.max(0.35,2.4-pw/10)+"s");
+            flow.style.opacity=0.95;
+        }else{
+            flow.style.opacity=0.12;
+        }
+
+        // readouts
+        const fmt=(v,d,u)=>v===null?"--":v.toFixed(d)+u;
+        const set=(id,txt)=>{
+            const el=document.getElementById(id);
+            if(el) el.textContent=txt;
+        };
+        set("twAmb",fmt(amb,1," °C"));
+        set("twMod",fmt(mod,1," °C"));
+        set("twIrr",fmt(irr,0," W/m²"));
+        invPower.textContent=fmt(pw,1," W");
+
+        chip.textContent=(["NO DATA","HEALTHY","WARNING","CRITICAL"])[level+1];
+
+        // health ring
+        if(ring){
+            const score=num(h.score);
+            const colors=["#90a4ae","#087f5b","#e5a000","#c62828"];
+            ring.style.setProperty("--p",score!==null?score:0);
+            ring.style.setProperty("--c",colors[level+1]);
+            const big=ring.querySelector("strong");
+            if(big) big.style.color=colors[level+1];
+        }
+    }
+
+    // panel click shows its own temperature
+    panels.forEach(p=>{
+        p.addEventListener("click",()=>{
+            const sel=document.getElementById("selectedInfo");
+            const mod=num((state.telemetry||{}).module_temperature);
+            if(sel) sel.textContent=
+                (p.dataset.name||"Panel")+" selected • "+p.title+
+                " • Status: "+chip.textContent;
+        });
+    });
+
+    update();
+    setInterval(update,1500);
+
+})();
+</script>
+
+</body>
+</html>
