@@ -8,7 +8,7 @@
 
 EcoTwin-AI keeps a virtual model of a solar energy asset synchronized with incoming telemetry. It scores the asset's health, estimates risk and remaining useful life, explains the result, recommends maintenance, and shows the status on both a web dashboard and three LEDs on an ESP32.
 
-![Dashboard](docs/images/dashboard.png)
+![Dashboard](images/screenshot_image1.png)
 
 ## Real vs simulated data
 
@@ -180,3 +180,4 @@ MIT. See [LICENSE](LICENSE).
 ![Screenshot 5](images/screenshot5.png)
 ![Screenshot 6](images/screenshot6.png)
 ![Screenshot 7](images/screenshot7.png)
+
